@@ -1,0 +1,27 @@
+[package]
+name = "tpt-ctrl-optimal"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+description = "Optimal control for tpt-control: from-scratch CARE/DARE solvers (Newton-Kleinman, structured doubling), LQR/DLQR gain computation, LQG via the separation principle, Lyapunov equation solvers."
+keywords = ["control", "lqr", "riccati", "optimal-control"]
+categories = ["science", "algorithms"]
+
+[dependencies]
+tpt-ctrl-core = { workspace = true }
+
+[dev-dependencies]
+criterion = { workspace = true }
+proptest = { workspace = true }
+tpt-ctrl-verify = { workspace = true }
+
+[[bench]]
+name = "optimal_bench"
+harness = false
+
+[lints]
+workspace = true

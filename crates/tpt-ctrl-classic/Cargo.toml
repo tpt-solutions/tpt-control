@@ -1,0 +1,22 @@
+[package]
+name = "tpt-ctrl-classic"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+description = "Classical control for tpt-control: transfer function algebra, PID with anti-windup, lead-lag compensators, frequency response, Bode/Nyquist data, gain/phase margins."
+keywords = ["control", "pid", "bode", "frequency-response"]
+categories = ["science", "algorithms"]
+
+[dependencies]
+tpt-ctrl-core = { workspace = true }
+
+[dev-dependencies]
+proptest = { workspace = true }
+tpt-ctrl-verify = { workspace = true }
+
+[lints]
+workspace = true

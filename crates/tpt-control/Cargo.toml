@@ -1,0 +1,34 @@
+[package]
+name = "tpt-control"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+description = "Umbrella crate for the tpt-control stack: pure-Rust, AI-native control systems theory (state-space, classical, optimal, estimation, MPC) with zero external solver dependencies."
+keywords = ["control", "control-theory", "lqr", "mpc", "kalman"]
+categories = ["science", "algorithms"]
+
+[dependencies]
+tpt-ctrl-core = { workspace = true }
+tpt-ctrl-classic = { workspace = true, optional = true }
+tpt-ctrl-optimal = { workspace = true, optional = true }
+tpt-ctrl-estimation = { workspace = true, optional = true }
+tpt-ctrl-mpc = { workspace = true, optional = true }
+tpt-ctrl-verify = { workspace = true, optional = true }
+
+[features]
+default = ["classic", "optimal", "estimation", "mpc", "verify"]
+classic = ["dep:tpt-ctrl-classic"]
+optimal = ["dep:tpt-ctrl-optimal"]
+estimation = ["dep:tpt-ctrl-estimation"]
+mpc = ["dep:tpt-ctrl-mpc"]
+verify = ["dep:tpt-ctrl-verify"]
+
+[dev-dependencies]
+proptest = { workspace = true }
+
+[lints]
+workspace = true

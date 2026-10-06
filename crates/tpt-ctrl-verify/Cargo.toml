@@ -1,0 +1,25 @@
+[package]
+name = "tpt-ctrl-verify"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+description = "Verification harnesses for tpt-control: proptest strategies for stable LTI systems and bounded noise, Lyapunov invariant checks, and Kani bounded-model-checking harnesses."
+keywords = ["verification", "proptest", "kani", "control", "lyapunov"]
+categories = ["development-tools", "science"]
+
+[dependencies]
+tpt-ctrl-core = { workspace = true }
+# Kani harnesses exercise the full solver stack under `cargo kani`; ordinary
+# builds never compile the `#[cfg(kani)]` module, but the deps must resolve.
+tpt-ctrl-optimal = { workspace = true }
+tpt-ctrl-mpc = { workspace = true }
+proptest = { workspace = true }
+
+[dev-dependencies]
+
+[lints]
+workspace = true

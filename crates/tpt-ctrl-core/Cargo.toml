@@ -1,0 +1,34 @@
+[package]
+name = "tpt-ctrl-core"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+description = "Foundation for tpt-control: dimensioned state-space models, from-scratch dense linear algebra (LU, Cholesky, QR, real Schur, matrix exponential), and exact ZOH/Tustin discretization. no_std + alloc."
+keywords = ["control", "state-space", "linear-algebra", "no-std"]
+categories = ["science", "algorithms", "no-std"]
+
+[dependencies]
+libm = { workspace = true, optional = true }
+
+[features]
+default = ["std"]
+# `std` pulls in the allocator (dynamic matrices need a heap).
+std = ["alloc"]
+# no_std + alloc builds use libm for the floating-point kernels.
+alloc = ["dep:libm"]
+
+[dev-dependencies]
+criterion = { workspace = true }
+proptest = { workspace = true }
+tpt-ctrl-verify = { workspace = true }
+
+[[bench]]
+name = "core_bench"
+harness = false
+
+[lints]
+workspace = true

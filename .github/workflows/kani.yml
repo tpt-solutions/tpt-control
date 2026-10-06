@@ -1,0 +1,21 @@
+name: Kani
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+# First Kani harnesses in the tpt-* ecosystem (see todo.md Phase 0 checkpoint).
+# Non-blocking for now: the harness set is expected to grow through Phase 3
+# and we don't want toolchain churn in the verifier to gate ordinary PRs.
+jobs:
+  kani:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Kani proofs
+        uses: model-checking/kani-github-action@v1.1
+        with:
+          args: --workspace

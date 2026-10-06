@@ -1,0 +1,23 @@
+[package]
+name = "tpt-ctrl-estimation"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+description = "State estimation for tpt-control: discrete Kalman filter, EKF with user-provided Jacobian closures, and UKF for nonlinear observation models. From scratch, no external filtering libraries."
+keywords = ["kalman-filter", "estimation", "sensor-fusion", "ekf", "ukf"]
+categories = ["science", "algorithms"]
+
+[dependencies]
+tpt-ctrl-core = { workspace = true }
+
+[dev-dependencies]
+proptest = { workspace = true }
+tpt-ctrl-verify = { workspace = true }
+tpt-ctrl-optimal = { workspace = true }
+
+[lints]
+workspace = true

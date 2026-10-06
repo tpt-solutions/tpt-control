@@ -1,0 +1,44 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/tpt-ctrl-core",
+    "crates/tpt-ctrl-classic",
+    "crates/tpt-ctrl-optimal",
+    "crates/tpt-ctrl-estimation",
+    "crates/tpt-ctrl-mpc",
+    "crates/tpt-ctrl-verify",
+    "crates/tpt-control",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+authors = ["TPT Solutions"]
+license = "MIT OR Apache-2.0"
+rust-version = "1.85"
+homepage = "https://github.com/tpt-solutions/tpt-control"
+repository = "https://github.com/tpt-solutions/tpt-control"
+
+[workspace.dependencies]
+tpt-ctrl-core = { version = "0.1.0", path = "crates/tpt-ctrl-core" }
+tpt-ctrl-classic = { version = "0.1.0", path = "crates/tpt-ctrl-classic" }
+tpt-ctrl-optimal = { version = "0.1.0", path = "crates/tpt-ctrl-optimal" }
+tpt-ctrl-estimation = { version = "0.1.0", path = "crates/tpt-ctrl-estimation" }
+tpt-ctrl-mpc = { version = "0.1.0", path = "crates/tpt-ctrl-mpc" }
+tpt-ctrl-verify = { version = "0.1.0", path = "crates/tpt-ctrl-verify" }
+libm = "0.2"
+proptest = "1.5"
+criterion = "0.5"
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+
+[workspace.lints.clippy]
+all = "warn"
+
+[profile.release]
+opt-level = 3
+lto = "fat"
+codegen-units = 1
+strip = "symbols"
+overflow-checks = true

@@ -1,0 +1,7 @@
+# Seeds for failure cases proptest has generated in the past. It is
+# automatically read and these particular cases re-run before any
+# novel cases are generated.
+#
+# It is recommended to check this file in to source control so that
+# everyone who runs the test benefits from these saved cases.
+cc 4aca51e2f97389fdff2e26df3de9c037268f86d45d6a2348ac10485446957207 # shrinks to a = DMat[3x3](-7.420387590308674 -0.5084321338580915 -2.536194851825532; -0.038573021216555224 -8.222703499233955 0.1368725408899258; 0.6378034317976747 -4.200340271228516 0.19950520919195025)

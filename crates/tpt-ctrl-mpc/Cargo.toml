@@ -1,0 +1,28 @@
+[package]
+name = "tpt-ctrl-mpc"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+description = "Model predictive control for tpt-control: horizon unrolling, explicit constraint matrix assembly, a from-scratch dual active-set QP solver (no OSQP/clarabel), and explicit-MPC lookup tables."
+keywords = ["mpc", "quadratic-programming", "predictive-control", "control"]
+categories = ["science", "algorithms", "concurrency"]
+
+[dependencies]
+tpt-ctrl-core = { workspace = true }
+
+[dev-dependencies]
+criterion = { workspace = true }
+proptest = { workspace = true }
+tpt-ctrl-verify = { workspace = true }
+tpt-ctrl-optimal = { workspace = true }
+
+[[bench]]
+name = "mpc_bench"
+harness = false
+
+[lints]
+workspace = true
