@@ -3,6 +3,36 @@
 All notable changes to the `tpt-control` workspace are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+- Every crate now ships its own `README.md` (features, install line, a working example, links to runnable examples) and `CHANGELOG.md`, and sets `readme` in its manifest.
+- Runnable examples: `tpt-ctrl-core/discretize_and_simulate`, `tpt-ctrl-classic/pid_step_response`, `tpt-ctrl-classic/bode_margins`, `tpt-ctrl-optimal/lqg_regulator`, `tpt-ctrl-verify/lyapunov_contract`, and the umbrella `tpt-control/quickstart`.
+- `tpt_ctrl_optimal::kalman_gain_continuous` (steady-state Kalman gain for continuous-time models, from the dual CARE).
+
+### Fixed
+- `tpt_ctrl_optimal::lqg` (continuous-time) took its observer gain from the discrete DARE, which is wrong for a continuous plant and could give an unstable observer. It now uses `kalman_gain_continuous`.
+
+### Changed
+- `tpt-ctrl-mpc` keyword `quadratic-programming` (21 characters, over the crates.io limit of 20) is replaced by `optimization`; its category `concurrency` is replaced by `science::robotics`.
+
+## [Unreleased]
+
+### Added
+- `tpt-ctrl-optimal::certify`: `certify_continuous` / `certify_discrete` return a
+  `Certificate` (relative Riccati residual, closed-loop margin, verdict). Non-finite inputs fail closed.
+- `tpt_control::matlab`: MATLAB-named wrappers (`tf2ss`, `c2d`, `lqr`, `dlqr`, `kalman`); cheat sheet in `docs/MATLAB.md`.
+- `ExplicitMpc::refine` (exact online-solve fallback), `ExplicitMpc::to_c_header`, `ExplicitMpc::to_rust_source`.
+- `tpt-control-cli`: the `tpt` command (`tpt lqr plant.toml`) with CI-friendly exit codes.
+- `tpt-control-wasm` and `playground/`: in-browser LQR design (`just playground`).
+- `bindings/python`: PyO3 package `tpt_control` (excluded from the Rust workspace).
+- CI: `wasm` build job; weekly scheduled Kani run.
+
+### Fixed
+- DARE/CARE solvers returned NaN gains for unstabilizable plants instead of an error. They now return `LinalgError::NotStabilizable`.
+- `just kani` ran a nonexistent `verify` harness; it now runs the crate's proofs.
+- Removed a leftover debug example (`tpt-ctrl-optimal/examples/dbg.rs`).
+
 ## [0.1.0] — 2026-10-06
 
 Initial workspace build: Phases 0–4 of `todo.md`.

@@ -20,6 +20,9 @@ pub enum LinalgError {
         /// Found shape as `(rows, cols)`.
         found: (usize, usize),
     },
+    /// A Riccati/Lyapunov iteration produced non-finite values. This usually
+    /// means the problem is not stabilizable, so no stabilizing solution exists.
+    NotStabilizable,
     /// A square matrix was required.
     NotSquare {
         /// Actual `(rows, cols)`.
@@ -39,6 +42,10 @@ impl fmt::Display for LinalgError {
                 f,
                 "dimension mismatch: expected {}x{}, found {}x{}",
                 expected.0, expected.1, found.0, found.1
+            ),
+            LinalgError::NotStabilizable => write!(
+                f,
+                "iteration produced non-finite values; the problem is likely not stabilizable"
             ),
             LinalgError::NotSquare { shape } => {
                 write!(f, "square matrix required, got {}x{}", shape.0, shape.1)

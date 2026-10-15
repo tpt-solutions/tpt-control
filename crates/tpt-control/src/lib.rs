@@ -59,6 +59,11 @@ pub use tpt_ctrl_mpc as mpc;
 #[cfg(feature = "verify")]
 pub use tpt_ctrl_verify as verify;
 
+/// MATLAB-named wrappers (`tf2ss`, `c2d`, `lqr`, `dlqr`, `kalman`), requires
+/// the `classic` and `optimal` features.
+#[cfg(all(feature = "classic", feature = "optimal"))]
+pub mod matlab;
+
 /// Everything you usually want, in one `use`.
 pub mod prelude {
     #[cfg(feature = "classic")]

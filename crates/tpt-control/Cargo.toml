@@ -10,6 +10,7 @@ homepage.workspace = true
 description = "Umbrella crate for the tpt-control stack: pure-Rust, AI-native control systems theory (state-space, classical, optimal, estimation, MPC) with zero external solver dependencies."
 keywords = ["control", "control-theory", "lqr", "mpc", "kalman"]
 categories = ["science", "algorithms"]
+readme = "README.md"
 
 [dependencies]
 tpt-ctrl-core = { workspace = true }

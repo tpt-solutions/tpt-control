@@ -5,10 +5,16 @@ on:
     branches: [master]
   pull_request:
     branches: [master]
+  # Weekly run so proofs are exercised even when no PR touches the solvers.
+  schedule:
+    - cron: "0 3 * * 1"
+  workflow_dispatch:
 
 # First Kani harnesses in the tpt-* ecosystem (see todo.md Phase 0 checkpoint).
 # Non-blocking for now: the harness set is expected to grow through Phase 3
 # and we don't want toolchain churn in the verifier to gate ordinary PRs.
+# The weekly schedule keeps the proofs running and reported even if PRs stop
+# touching the solvers; promote to blocking once the run is consistently green.
 jobs:
   kani:
     runs-on: ubuntu-latest

@@ -7,6 +7,7 @@
 use tpt_ctrl_core::dmat::DMat;
 use tpt_ctrl_core::error::Result;
 
+use crate::care::care;
 use crate::dare::dare;
 use crate::lqr::{lqr, LqrSolution};
 
@@ -29,6 +30,23 @@ pub fn kalman_gain(
     Ok((sol.x, l))
 }
 
+/// Steady-state Kalman gains for the continuous-time model
+/// `x' = A x + w`, `y = C x + v`.
+///
+/// The prediction error covariance `P` solves the CARE on the transposed
+/// system `(A^T, C^T, Q_noise, R_noise)`; the innovation gain is
+/// `L = P C^T R^{-1}`. Returns `(P, L)`.
+pub fn kalman_gain_continuous(
+    a: &DMat<f64>,
+    c: &DMat<f64>,
+    q_noise: &DMat<f64>,
+    r_noise: &DMat<f64>,
+) -> Result<(DMat<f64>, DMat<f64>)> {
+    let p = care(&a.transpose(), &c.transpose(), q_noise, r_noise)?;
+    let l = &(&p * &c.transpose()) * &r_noise.inverse()?;
+    Ok((p, l))
+}
+
 /// LQG controller: LQR state feedback plus a steady-state Kalman observer.
 ///
 /// By the separation principle the two designs are computed independently
@@ -46,7 +64,8 @@ pub struct LqgController {
     pub p: DMat<f64>,
 }
 
-/// Designs the LQG controller for `x' = A x + B u`, `y = C x`.
+/// Designs the continuous-time LQG controller for `x' = A x + B u`,
+/// `y = C x`, using the CARE-based Kalman observer.
 pub fn lqg(
     a: &DMat<f64>,
     b: &DMat<f64>,
@@ -57,7 +76,7 @@ pub fn lqg(
     r_noise: &DMat<f64>,
 ) -> Result<LqgController> {
     let LqrSolution { x, k } = lqr(a, b, q_cost, r_cost)?;
-    let (p, l) = kalman_gain(a, c, q_noise, r_noise)?;
+    let (p, l) = kalman_gain_continuous(a, c, q_noise, r_noise)?;
     Ok(LqgController { k, l, x, p })
 }
 
@@ -114,6 +133,26 @@ mod tests {
             }
         }
         assert_mat_close(&p, &p_it, 1e-8);
+    }
+
+    #[test]
+    fn kalman_gain_continuous_matches_closed_form() {
+        // Double integrator, noise on velocity only (q), position sensor (r).
+        // Steady state: p12 = sqrt(q r), p11 = sqrt(2 p12 r), L = P C^T / r.
+        let (q, r) = (0.5_f64, 0.01_f64);
+        let a = DMat::from_rows(&[&[0.0, 1.0], &[0.0, 0.0]]);
+        let c = DMat::from_rows(&[&[1.0, 0.0]]);
+        let qn = DMat::from_rows(&[&[0.0, 0.0], &[0.0, q]]);
+        let rn = DMat::from_rows(&[&[r]]);
+        let (p, l) = kalman_gain_continuous(&a, &c, &qn, &rn).unwrap();
+
+        let p12 = (q * r).sqrt();
+        let p11 = (2.0 * p12 * r).sqrt();
+        let p22 = p11 * p12 / r;
+        assert_mat_close(&p, &DMat::from_rows(&[&[p11, p12], &[p12, p22]]), 1e-6);
+        assert_mat_close(&l, &DMat::from_rows(&[&[p11 / r], &[p12 / r]]), 1e-6);
+        let obs = &a - &(&l * &c);
+        assert!(tpt_ctrl_core::analysis::is_stable_continuous(&obs, 1e-9).unwrap());
     }
 
     #[test]

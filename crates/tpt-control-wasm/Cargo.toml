@@ -1,0 +1,24 @@
+[package]
+name = "tpt-control-wasm"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+description = "WebAssembly bindings for tpt-control: design and certify an LQR gain in the browser."
+readme = "README.md"
+publish = false
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+tpt-ctrl-core = { workspace = true }
+tpt-ctrl-optimal = { workspace = true }
+# Must match the wasm-bindgen CLI used to generate the playground bindings.
+wasm-bindgen = "=0.2.128"
+
+[lints]
+workspace = true

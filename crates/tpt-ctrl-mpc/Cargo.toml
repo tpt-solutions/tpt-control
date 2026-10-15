@@ -8,8 +8,9 @@ license.workspace = true
 repository.workspace = true
 homepage.workspace = true
 description = "Model predictive control for tpt-control: horizon unrolling, explicit constraint matrix assembly, a from-scratch dual active-set QP solver (no OSQP/clarabel), and explicit-MPC lookup tables."
-keywords = ["mpc", "quadratic-programming", "predictive-control", "control"]
-categories = ["science", "algorithms", "concurrency"]
+keywords = ["mpc", "optimization", "predictive-control", "control"]
+categories = ["science", "algorithms", "science::robotics"]
+readme = "README.md"
 
 [dependencies]
 tpt-ctrl-core = { workspace = true }

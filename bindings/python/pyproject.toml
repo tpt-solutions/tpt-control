@@ -1,0 +1,22 @@
+[build-system]
+requires = ["maturin>=1.5,<2.0"]
+build-backend = "maturin"
+
+[project]
+name = "tpt-control"
+version = "0.1.0"
+description = "Pure-Rust control systems theory: LQR/DLQR with certificates, discretization, transfer functions."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT OR Apache-2.0" }
+authors = [{ name = "TPT Solutions" }]
+keywords = ["control", "lqr", "riccati", "state-space"]
+classifiers = [
+    "Programming Language :: Rust",
+    "Topic :: Scientific/Engineering",
+    "License :: OSI Approved :: MIT License",
+    "License :: OSI Approved :: Apache Software License",
+]
+
+[tool.maturin]
+features = ["pyo3/extension-module"]

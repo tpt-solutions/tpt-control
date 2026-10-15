@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>tpt-control playground</title>
+<style>
+  :root { --bg:#fbfaf7; --fg:#1d1d1b; --muted:#6b6a64; --card:#ffffff; --line:#d9d6cd; --ok:#1b7f4b; --bad:#b3261e; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --bg:#171715; --fg:#ece9e1; --muted:#9c998f; --card:#21211e; --line:#3a3935; --ok:#5fd08f; --bad:#ff8a80; }
+  }
+  :root[data-theme="dark"] { --bg:#171715; --fg:#ece9e1; --muted:#9c998f; --card:#21211e; --line:#3a3935; --ok:#5fd08f; --bad:#ff8a80; }
+  body { margin:0; background:var(--bg); color:var(--fg); font:16px/1.5 system-ui, sans-serif; }
+  main { max-width:760px; margin:0 auto; padding:24px 16px; }
+  h1 { font-size:1.4rem; margin:0 0 4px; }
+  p.muted { color:var(--muted); margin:0 0 20px; font-size:.9rem; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:16px; margin-bottom:16px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; }
+  label { display:block; font-size:.85rem; color:var(--muted); margin-bottom:4px; }
+  textarea, input, select { width:100%; box-sizing:border-box; font:14px ui-monospace, Consolas, monospace; background:var(--bg); color:var(--fg); border:1px solid var(--line); border-radius:6px; padding:8px; }
+  textarea { min-height:64px; }
+  .row { display:flex; gap:12px; align-items:end; flex-wrap:wrap; margin-top:12px; }
+  .row > div { flex:1; min-width:120px; }
+  button { background:var(--fg); color:var(--bg); border:0; border-radius:6px; padding:10px 18px; font-weight:600; cursor:pointer; }
+  pre { white-space:pre-wrap; word-break:break-word; font:13px ui-monospace, Consolas, monospace; margin:0; }
+  .verdict { font-weight:700; }
+  .ok { color:var(--ok); } .bad { color:var(--bad); }
+  .note { font-size:.8rem; color:var(--muted); margin-top:16px; }
+  @media (max-width:520px) { main { padding:16px; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>tpt-control playground</h1>
+  <p class="muted">Design an LQR gain in your browser and check it with a certificate. Everything runs locally in WebAssembly.</p>
+
+  <div class="card">
+    <div class="row">
+      <div>
+        <label for="kind">Plant type</label>
+        <select id="kind">
+          <option value="continuous">Continuous (CARE)</option>
+          <option value="discrete">Discrete (DARE)</option>
+        </select>
+      </div>
+      <div>
+        <label for="preset">Preset</label>
+        <select id="preset">
+          <option value="di">Double integrator</option>
+          <option value="sdi">Sampled double integrator (0.1 s)</option>
+          <option value="bad">Unstabilizable (should fail)</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="grid">
+      <div><label for="a">A (n×n, row-major)</label><textarea id="a"></textarea></div>
+      <div><label for="b">B (n×m)</label><textarea id="b"></textarea></div>
+      <div><label for="q">Q (n×n)</label><textarea id="q"></textarea></div>
+      <div><label for="r">R (m×m)</label><textarea id="r"></textarea></div>
+    </div>
+    <div class="row">
+      <div><label for="n">n (states)</label><input id="n" type="number" min="1" value="2"></div>
+      <div><label for="m">m (inputs)</label><input id="m" type="number" min="1" value="1"></div>
+      <div><button id="run">Design &amp; certify</button></div>
+    </div>
+  </div>
+
+  <div class="card" id="out" aria-live="polite">
+    <p class="muted">Press “Design &amp; certify”.</p>
+  </div>
+
+  <p class="note">Numbers are separated by spaces, commas or new lines. Values are read as row-major. The certificate checks the relative Riccati residual (≤ 1e-8) and that the closed loop is strictly stable.</p>
+  <p class="note">Serve this folder over HTTP (for example <code>python -m http.server</code> from the repo root and open <code>/playground/</code>): browsers block WebAssembly modules from <code>file://</code>.</p>
+</main>
+
+<script type="module">
+  const PRESETS = {
+    di:  { kind: "continuous", n: 2, m: 1, a: "0 1 0 0", b: "0 1", q: "1 0 0 1", r: "1" },
+    sdi: { kind: "discrete",   n: 2, m: 1, a: "1 0.1 0 1", b: "0.005 0.1", q: "1 0 0 1", r: "1" },
+    bad: { kind: "continuous", n: 2, m: 1, a: "1 0 0 1", b: "1 0", q: "1 0 0 1", r: "1" },
+  };
+  const $ = (id) => document.getElementById(id);
+  const parse = (text) => text.trim().split(/[\s,]+/).filter(Boolean).map(Number);
+  const show = (html) => { $("out").innerHTML = html; };
+  const esc = (s) => String(s).replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+
+  function loadPreset(key) {
+    const p = PRESETS[key];
+    $("kind").value = p.kind; $("n").value = p.n; $("m").value = p.m;
+    $("a").value = p.a; $("b").value = p.b; $("q").value = p.q; $("r").value = p.r;
+  }
+
+  let wasm = null;
+  async function init() {
+    try {
+      const mod = await import("./pkg/tpt_control_wasm.js");
+      await mod.default();
+      wasm = mod;
+      $("run").disabled = false;
+    } catch (e) {
+      show(`<p class="verdict bad">WebAssembly failed to load</p><pre>${esc(e)}</pre>
+            <p class="muted">Build it first: <code>just playground</code>, then serve this folder over HTTP.</p>`);
+    }
+  }
+
+  function run() {
+    try {
+      const n = Number($("n").value), m = Number($("m").value);
+      const json = wasm.design_lqr($("kind").value === "continuous", n, m,
+        parse($("a").value), parse($("b").value), parse($("q").value), parse($("r").value));
+      const d = JSON.parse(json);
+      const verdict = d.certified
+        ? `<span class="verdict ok">CERTIFIED</span>`
+        : `<span class="verdict bad">NOT CERTIFIED</span>`;
+      show(`<p>${verdict}</p>
+        <p class="muted">Gain K (u = −K x)</p><pre>[ ${d.k.map((v) => v.toPrecision(6)).join(", ")} ]</pre>
+        <p class="muted">Relative Riccati residual: ${d.riccati_residual.toExponential(2)} · closed-loop margin: ${d.closed_loop_margin.toPrecision(6)}</p>`);
+    } catch (e) {
+      show(`<p class="verdict bad">Design failed</p><pre>${esc(e.message || e)}</pre>`);
+    }
+  }
+
+  $("preset").addEventListener("change", (e) => loadPreset(e.target.value));
+  $("run").addEventListener("click", run);
+  $("run").disabled = true;
+  loadPreset("di");
+  init();
+</script>
+</body>
+</html>

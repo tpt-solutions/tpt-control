@@ -1,0 +1,23 @@
+[package]
+name = "tpt-control-python"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.85"
+authors = ["TPT Solutions"]
+license = "MIT OR Apache-2.0"
+description = "Python bindings for tpt-control (LQR/DLQR, certificates, c2d, tf2ss)."
+publish = false
+
+# Standalone crate: excluded from the Rust workspace so `cargo test --workspace`
+# never links against a Python interpreter.
+[workspace]
+
+[lib]
+name = "tpt_control"
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = { version = "0.30", features = ["extension-module"] }
+tpt-ctrl-core = { path = "../../crates/tpt-ctrl-core" }
+tpt-ctrl-classic = { path = "../../crates/tpt-ctrl-classic" }
+tpt-ctrl-optimal = { path = "../../crates/tpt-ctrl-optimal" }

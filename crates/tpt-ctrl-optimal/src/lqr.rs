@@ -34,6 +34,17 @@ pub fn dlqr(a: &DMat<f64>, b: &DMat<f64>, q: &DMat<f64>, r: &DMat<f64>) -> Resul
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn unstabilizable_plant_is_rejected_not_nan() {
+        // Unstable mode with no input authority: no stabilizing solution exists.
+        let a = DMat::from_rows(&[&[1.0, 0.0], &[0.0, 1.0]]);
+        let b = DMat::from_rows(&[&[1.0], &[0.0]]);
+        let q = DMat::identity(2);
+        let r = DMat::from_rows(&[&[1.0]]);
+        assert!(lqr(&a, &b, &q, &r).is_err());
+        assert!(dlqr(&a, &b, &q, &r).is_err());
+    }
     use tpt_ctrl_verify::testing::assert_close;
 
     #[test]

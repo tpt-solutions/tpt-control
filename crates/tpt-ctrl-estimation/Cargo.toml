@@ -10,6 +10,7 @@ homepage.workspace = true
 description = "State estimation for tpt-control: discrete Kalman filter, EKF with user-provided Jacobian closures, and UKF for nonlinear observation models. From scratch, no external filtering libraries."
 keywords = ["kalman-filter", "estimation", "sensor-fusion", "ekf", "ukf"]
 categories = ["science", "algorithms"]
+readme = "README.md"
 
 [dependencies]
 tpt-ctrl-core = { workspace = true }

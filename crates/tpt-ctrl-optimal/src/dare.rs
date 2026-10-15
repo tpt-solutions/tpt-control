@@ -69,7 +69,13 @@ pub fn dare(a: &DMat<f64>, b: &DMat<f64>, q: &DMat<f64>, r: &DMat<f64>) -> Resul
         gk = gk_next;
         hk = hk_next;
     }
-    if ak.norm_1() > 1e-6 * scale {
+    // Written so that NaN fails the check: `NaN > tol` is false, which would
+    // otherwise let a diverged iteration pass as converged.
+    let residual = ak.norm_1();
+    if !residual.is_finite() || !hk.norm_fro().is_finite() {
+        return Err(LinalgError::NotStabilizable);
+    }
+    if residual > 1e-6 * scale {
         return Err(LinalgError::NoConvergence);
     }
 

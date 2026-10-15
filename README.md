@@ -37,6 +37,9 @@ Design principles (see `spec.txt`):
 | `tpt-ctrl-mpc`      | horizon condensing, active-set QP, constrained MPC, explicit-MPC tables |
 | `tpt-ctrl-verify`   | proptest strategies, Lyapunov contract checks, Kani harnesses  |
 | `tpt-control`       | umbrella crate (feature-gated re-exports)                      |
+| `tpt-control-cli`   | `tpt` command: design and certify a gain from a TOML plant    |
+| `tpt-control-wasm`  | WebAssembly bindings and browser playground (`playground/`)   |
+| `bindings/python`   | Python package `tpt_control` (PyO3; see `docs/MATLAB.md` too)  |
 
 ## Quick start
 

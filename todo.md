@@ -84,6 +84,24 @@ Companion to `spec.txt`. License: dual MIT OR Apache-2.0. Author/org: TPT Soluti
 - [ ] Decide publish target: crates.io vs. internal/path-dependency-only (confirm which siblings actually publish) — **open decision for the repo owner**
 - [ ] Tag and publish v1.0.0 (blocked on the decision above)
 
+## Phase 6 — Adoption, Tooling & Innovation (post-review)
+
+- [x] Python bindings (PyO3 + maturin)
+  - **Done:** `bindings/python` (PyO3 0.30, excluded from the Rust workspace). Exposes `lqr_gain`, `dlqr_gain`, `certify`, `c2d`, `tf2ss`, `eigenvalues`. 9/9 pytest pass against a maturin wheel. Not yet published to PyPI.: separate `bindings/python` crate, excluded from the Rust workspace so the core gate stays Python-free; exposes LQR/DLQR, c2d, tf2ss, and certificates as `tpt_control`
+- [x] MATLAB migration layer
+  - **Done:** `tpt_control::matlab` (`tf2ss`, `c2d`, `lqr`, `dlqr`, `kalman`, MATLAB output order) with unit tests; cheat sheet in `docs/MATLAB.md`.: `tpt_control::matlab` aliases (`tf2ss`, `c2d`, `lqr`, `dlqr`, `kalman`) plus a one-page MATLAB → tpt-control cheat sheet (`docs/MATLAB.md`)
+- [x] `tpt` CLI
+  - **Done:** `crates/tpt-control-cli`. `tpt lqr plant.toml` exits 0 when certified, 1 when the certificate fails, 2 on bad input or an unstabilizable plant. Sample plants in `plants/`; 5 integration tests.: `crates/tpt-control-cli`, reads a TOML plant description and prints gains, closed-loop poles and the certificate
+- [x] WASM playground
+  - **Done:** `crates/tpt-control-wasm` (wasm-bindgen `=0.2.128`), `playground/index.html`, `just playground`. Verified via the Node target (`design_lqr` returns certified gains and typed errors). Not yet checked in a real browser.: `crates/tpt-control-wasm` (wasm-bindgen) plus a static `playground/index.html` that runs LQR in the browser
+- [x] Embedded export
+  - **Done:** `ExplicitMpc::to_c_header` and `to_rust_source` emit tables plus a nearest-neighbour lookup. Rust output is tested. **The C header is not compiled-tested**: no C compiler is installed on this machine.: generate a C header and Rust `const` source from an `ExplicitMpc` table, including a lookup routine
+- [x] Self-certifying solves
+  - **Done:** `tpt_ctrl_optimal::certify` (`certify_continuous`, `certify_discrete`) with fail-closed handling of non-finite inputs. While building it, found and fixed a real bug: the DARE convergence check passed NaN results, so unstabilizable plants returned NaN gains. Solvers now return `LinalgError::NotStabilizable`.: `tpt_ctrl_optimal::certify` returns Riccati residual, closed-loop stability margin and a pass/fail verdict alongside each gain
+- [x] CI hardening
+  - **Done (unverified on GitHub):** `wasm` job added to `ci.yml`; `kani.yml` gains a weekly schedule and manual dispatch, still non-blocking. Local equivalents pass; the hosted runs have not been observed.: wasm build job in `ci.yml`; scheduled weekly Kani run in `kani.yml` (still non-blocking)
+
+
 ## Gate status
 
 `just ci` equivalent: fmt clean, `--all-features` build clean, 138 tests +

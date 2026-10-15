@@ -1,7 +1,15 @@
-/target
+target/
 Cargo.lock
 **/*.rs.bk
 *.pdb
 .idea/
 .vscode/
 *.swp
+
+# Generated WASM playground bindings (just playground)
+/playground/pkg
+
+# Python bindings caches (bindings/python)
+__pycache__/
+*.pyc
+.pytest_cache/

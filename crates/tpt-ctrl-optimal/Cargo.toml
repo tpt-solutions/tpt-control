@@ -10,6 +10,7 @@ homepage.workspace = true
 description = "Optimal control for tpt-control: from-scratch CARE/DARE solvers (Newton-Kleinman, structured doubling), LQR/DLQR gain computation, LQG via the separation principle, Lyapunov equation solvers."
 keywords = ["control", "lqr", "riccati", "optimal-control"]
 categories = ["science", "algorithms"]
+readme = "README.md"
 
 [dependencies]
 tpt-ctrl-core = { workspace = true }

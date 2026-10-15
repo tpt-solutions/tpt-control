@@ -1,0 +1,25 @@
+[package]
+name = "tpt-control-cli"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+description = "The `tpt` command-line tool: design an LQR/DLQR gain from a TOML plant file and certify the result."
+readme = "README.md"
+keywords = ["control", "lqr", "cli"]
+categories = ["command-line-utilities", "science"]
+
+[[bin]]
+name = "tpt"
+path = "src/main.rs"
+
+[dependencies]
+tpt-control = { workspace = true }
+serde = { version = "1", features = ["derive"] }
+toml = "0.8"
+
+[lints]
+workspace = true

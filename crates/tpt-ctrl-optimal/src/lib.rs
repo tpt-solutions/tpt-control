@@ -31,11 +31,13 @@
 #![forbid(unsafe_code)]
 
 pub mod care;
+pub mod certify;
 pub mod dare;
 pub mod kalman;
 pub mod lqr;
 
 pub use care::care;
+pub use certify::{certify_continuous, certify_discrete, Certificate};
 pub use dare::dare;
-pub use kalman::{dlqg, kalman_gain, lqg, LqgController};
+pub use kalman::{dlqg, kalman_gain, kalman_gain_continuous, lqg, LqgController};
 pub use lqr::{dlqr, lqr, LqrSolution};

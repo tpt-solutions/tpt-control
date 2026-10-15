@@ -1,0 +1,6 @@
+# The same double integrator sampled at 0.1 s (ZOH), discrete LQR.
+kind = "discrete"
+a = [[1.0, 0.1], [0.0, 1.0]]
+b = [[0.005], [0.1]]
+q = [[1.0, 0.0], [0.0, 1.0]]
+r = [[1.0]]

@@ -1,0 +1,7 @@
+# Unstable mode with no input authority: no stabilizing gain exists, so the
+# design must fail rather than return a bogus gain.
+kind = "continuous"
+a = [[1.0, 0.0], [0.0, 1.0]]
+b = [[1.0], [0.0]]
+q = [[1.0, 0.0], [0.0, 1.0]]
+r = [[1.0]]

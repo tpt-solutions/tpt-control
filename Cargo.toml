@@ -1,5 +1,7 @@
 [workspace]
 resolver = "2"
+# Python bindings build with maturin; see bindings/python.
+exclude = ["bindings/python"]
 members = [
     "crates/tpt-ctrl-core",
     "crates/tpt-ctrl-classic",
@@ -8,6 +10,8 @@ members = [
     "crates/tpt-ctrl-mpc",
     "crates/tpt-ctrl-verify",
     "crates/tpt-control",
+    "crates/tpt-control-cli",
+    "crates/tpt-control-wasm",
 ]
 
 [workspace.package]
@@ -26,6 +30,7 @@ tpt-ctrl-optimal = { version = "0.1.0", path = "crates/tpt-ctrl-optimal" }
 tpt-ctrl-estimation = { version = "0.1.0", path = "crates/tpt-ctrl-estimation" }
 tpt-ctrl-mpc = { version = "0.1.0", path = "crates/tpt-ctrl-mpc" }
 tpt-ctrl-verify = { version = "0.1.0", path = "crates/tpt-ctrl-verify" }
+tpt-control = { version = "0.1.0", path = "crates/tpt-control" }
 libm = "0.2"
 proptest = "1.5"
 criterion = "0.5"

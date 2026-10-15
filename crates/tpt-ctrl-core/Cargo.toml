@@ -10,6 +10,7 @@ homepage.workspace = true
 description = "Foundation for tpt-control: dimensioned state-space models, from-scratch dense linear algebra (LU, Cholesky, QR, real Schur, matrix exponential), and exact ZOH/Tustin discretization. no_std + alloc."
 keywords = ["control", "state-space", "linear-algebra", "no-std"]
 categories = ["science", "algorithms", "no-std"]
+readme = "README.md"
 
 [dependencies]
 libm = { workspace = true, optional = true }

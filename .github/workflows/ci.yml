@@ -52,6 +52,16 @@ jobs:
       # are std-only verification/control tooling for now.
       - run: cargo build -p tpt-ctrl-core --target thumbv6m-none-eabi --no-default-features --features alloc
 
+  wasm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+      # The browser playground's WASM bindings must keep compiling.
+      - run: cargo build -p tpt-control-wasm --target wasm32-unknown-unknown --release
+
   cargo-deny:
     runs-on: ubuntu-latest
     steps:

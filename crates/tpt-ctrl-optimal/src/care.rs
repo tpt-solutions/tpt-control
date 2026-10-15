@@ -38,7 +38,7 @@ pub fn care(a: &DMat<f64>, b: &DMat<f64>, q: &DMat<f64>, r: &DMat<f64>) -> Resul
     let mut k = dare_sol.k;
 
     let mut x = DMat::<f64>::zeros(n, n);
-    for iter in 0..30 {
+    for _ in 0..30 {
         let ak = &(a - &(b * &k));
         // solve_lyapunov(a, m) solves A^T X + X A = -m, so pass (Q + K^T R K).
         let krk = &(k.transpose() * r) * &k;
@@ -47,14 +47,13 @@ pub fn care(a: &DMat<f64>, b: &DMat<f64>, q: &DMat<f64>, r: &DMat<f64>) -> Resul
         let change = (&x_next - &x).norm_fro() / x_next.norm_fro().max(1e-300);
         x = x_next;
         k = &r_inv * &(b.transpose() * &x);
-        let _ = iter;
+        if !change.is_finite() {
+            return Err(LinalgError::NotStabilizable);
+        }
         if change < 1e-12 {
             break;
         }
     }
-
-    // Final gain consistency.
-    let _ = k;
     Ok(x)
 }
 

@@ -48,7 +48,12 @@ no-std:
 
 # Run Kani bounded model-checking harnesses (Linux only; see .github/workflows/kani.yml).
 kani:
-    cargo kani -p tpt-ctrl-verify --harness verify
+    cargo kani -p tpt-ctrl-verify
+
+# Build the WASM playground bindings into playground/pkg (serve over HTTP to try it).
+playground:
+    cargo build -p tpt-control-wasm --target wasm32-unknown-unknown --release
+    wasm-bindgen --target web --out-dir playground/pkg target/wasm32-unknown-unknown/release/tpt_control_wasm.wasm
 
 # --- Meta -----------------------------------------------------------------
 

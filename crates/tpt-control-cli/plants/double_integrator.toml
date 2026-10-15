@@ -1,0 +1,6 @@
+# Double integrator x'' = u, minimize int x^T x + u^2 dt.
+kind = "continuous"
+a = [[0.0, 1.0], [0.0, 0.0]]
+b = [[0.0], [1.0]]
+q = [[1.0, 0.0], [0.0, 1.0]]
+r = [[1.0]]
